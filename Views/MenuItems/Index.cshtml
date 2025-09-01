@@ -1,0 +1,65 @@
+﻿@model IEnumerable<MenuItem>
+
+@{
+    ViewData["Title"] = "Menu Items";
+}
+
+<h1>Menu Items</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </p>
+}
+
+<div class="mb-3">
+    <a asp-action="Available" class="btn btn-success me-2">View Available Items</a>
+    <a asp-action="ByCategory" asp-route-category="Burgers" class="btn btn-outline-primary me-2">Burgers</a>
+    <a asp-action="ByCategory" asp-route-category="Sides" class="btn btn-outline-primary me-2">Sides</a>
+    <a asp-action="ByCategory" asp-route-category="Drinks" class="btn btn-outline-primary me-2">Drinks</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Availability</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>
+                    <span class="badge bg-secondary">@item.Category</span>
+                </td>
+                <td>@item.Price.ToString("C")</td>
+                <td>
+                    @if (item.Availability)
+                    {
+                        <span class="badge bg-success">Available</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Unavailable</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.ItemId" class="btn btn-info btn-sm">Details</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-danger btn-sm">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
