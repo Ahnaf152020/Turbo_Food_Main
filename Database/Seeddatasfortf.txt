@@ -1,0 +1,165 @@
+﻿-- =============================================
+-- INSERT DEMO USERS
+-- =============================================
+USE TurboFood;
+GO
+
+-- Insert sample users (if they don't exist)
+IF NOT EXISTS (SELECT 1 FROM AspNetUsers WHERE UserName = 'ratin27@gmail.com')
+BEGIN
+    INSERT INTO AspNetUsers (Id, FullName, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnabled, AccessFailedCount)
+    VALUES 
+    ('1541dffe-7d7c-4d9f-9216-9d9709605e39', 'Ratin', 'ratin27@gmail.com', 'RATIN27@GMAIL.COM', 'ratin27@gmail.com', 'RATIN27@GMAIL.COM', 0, 'AQAAAAIAAYagAAAAEJF7ujJDM7LfeBS5thijq/PdTljf4SiXDeOdTA/4RG6HUK1VAuoXYJLQVO5PkyB9Rw==', 'XFQBTIB4QYNXWMBJ3WVTF7H7EAVUAA6F', 'ac5f4c42-495d-4c86-ac8f-4871be110c06', NULL, 0, 0, 1, 0),
+    ('32e6f8ff-7a38-472e-a9f9-52baefdde500', 'Amer', 'ahnafamer15@gmail.com', 'AHNAFAMER15@GMAIL.COM', 'ahnafamer15@gmail.com', 'AHNAFAMER15@GMAIL.COM', 0, 'AQAAAAIAAYagAAAAEI8YOVus0UAi9/QaIKD9CMuB1cqvhwCzZcDGrV0Q0s+G+OQKfKSvx+wuJtaAEVYwgw==', 'CRC63F4TD3QSRIXPJ4BV6S3ROHKUY4R7', '1dad928d-2c78-4c76-b18b-76c5467ec7ea', NULL, 0, 0, 1, 0),
+    ('9844cf2b-1774-44cc-9d88-16113bbea644', 'Arif', 'arif33@gmail.com', 'ARIF33@GMAIL.COM', 'arif33@gmail.com', 'ARIF33@GMAIL.COM', 0, 'AQAAAAIAAYagAAAAEBCbcGEsziov+s+alK4DxuE1gVnhXCBaTzgqAL73jrRIxJm59QWf0H88Cj6WceaQyw==', 'RWZBRSBW4I5XYN3YMO6SR6NJKXGTZWSL', '4e44adbc-7309-4dea-a1d5-6e8ce2e1dfbc', NULL, 0, 0, 1, 0),
+    ('ca9ce714-cda9-4531-9486-501f4a6a86b9', 'Rayaan50', 'rayaan50@gmail.com', 'RAYAAN50@GMAIL.COM', 'rayaan50@gmail.com', 'RAYAAN50@GMAIL.COM', 0, 'AQAAAAIAAYagAAAAEKgAOS4zHINMkDueHQjo55lwmHw46i6GzoChusLEdpfZ8tFuo96E2nTjrn6pLsOfzQ==', 'S374WAC4NIHNDY2EO4PED36M4V22DYRN', '7a453fa6-f5ea-41a2-938b-4747276f2320', NULL, 0, 0, 1, 0),
+    ('dccb4099-b611-4242-ba9e-c1cf6abd1c65', 'Lamisa Zimy', 'zimy51@gmail.com', 'ZIMY51@GMAIL.COM', 'zimy51@gmail.com', 'ZIMY51@GMAIL.COM', 0, 'AQAAAAIAAYagAAAAEB9v4FIdsVz58rsmwSn8MahELtiH77Tl4At0F+k/ss9zVOWUtxGqNELS5dcUqq6XYg==', 'FRPS2DACQTZHA5SL3CVJVV34DW6KKYFO', '98d14229-982b-45cc-8dbb-52e240d771fe', NULL, 0, 0, 1, 0),
+    ('ea993d0e-fad4-44ce-a5f7-b7aa211bf7b2', 'Turbo Food', 'admin@turbofood.com', 'ADMIN@TURBOFOOD.COM', 'admin@turbofood.com', 'ADMIN@TURBOFOOD.COM', 1, 'AQAAAAIAAYagAAAAEI3DTP9fkBlpceZsRerLI5Pt6a58GYPRhx3SToYYVONOIF/quBd4nnMb8w4myRydTQ==', '6ZALJNMTDIQMSQKWIZ5UE262GTNBKVFW', '17770d09-55cf-4665-9257-c4972b07610b', NULL, 0, 0, 1, 0);
+    
+    PRINT 'Demo users inserted successfully!';
+END
+ELSE
+BEGIN
+    PRINT 'Users already exist. Skipping user insertion.';
+END
+GO
+
+--main--
+USE TurboFood; -- Replace with your database name
+
+-- First, ensure we have menu items
+IF NOT EXISTS (SELECT 1 FROM MenuItems WHERE Name = 'Chicken Biryani')
+BEGIN
+    INSERT INTO MenuItems (Name, Description, Category, Availability, Price, CreatedAt)
+    VALUES 
+    ('Chicken Biryani', 'Fragrant rice with spicy chicken', 'Rice & Biryani', 1, 120.00, GETDATE()),
+    ('Beef Bhuna', 'Dry spicy beef preparation', 'Curry & Bhuna', 1, 130.00, GETDATE()),
+    ('French Fries', 'Crispy potato fries', 'Snacks', 1, 50.00, GETDATE()),
+    ('Borhani', 'Traditional spicy yogurt drink', 'Drinks', 1, 40.00, GETDATE()),
+    ('Fuchka', 'Crispy shells with tamarind water', 'Snacks', 1, 40.00, GETDATE());
+END
+
+-- Declare ALL variables first
+DECLARE @BurgerId INT, @BiryaniId INT, @BeefBhunaId INT, @FriesId INT, @BorhaniId INT, @FuchkaId INT;
+DECLARE @Order1 INT, @Order2 INT, @Order3 INT, @Order4 INT, @Order5 INT, @Order6 INT, @Order7 INT, @Order8 INT, @Order9 INT;
+
+-- Get menu item IDs (with proper error handling)
+SELECT @BurgerId = ItemId FROM MenuItems WHERE Name = 'Cheese Burger';
+SELECT @BiryaniId = ItemId FROM MenuItems WHERE Name = 'Chicken Biryani';
+SELECT @BeefBhunaId = ItemId FROM MenuItems WHERE Name = 'Beef Bhuna';
+SELECT @FriesId = ItemId FROM MenuItems WHERE Name = 'French Fries';
+SELECT @BorhaniId = ItemId FROM MenuItems WHERE Name = 'Borhani';
+SELECT @FuchkaId = ItemId FROM MenuItems WHERE Name = 'Fuchka';
+
+-- Check if any menu item is missing
+IF @BurgerId IS NULL OR @BiryaniId IS NULL OR @BeefBhunaId IS NULL OR @FriesId IS NULL OR @BorhaniId IS NULL OR @FuchkaId IS NULL
+BEGIN
+    PRINT 'Some menu items are missing. Please check your MenuItems table.';
+    RETURN;
+END
+
+-- Insert orders one by one and capture OrderIDs
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('1541dffe-7d7c-4d9f-9216-9d9709605e39', GETDATE() - 5, 250.00, 'Completed', 'Extra cheese and mayo');
+SET @Order1 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('1541dffe-7d7c-4d9f-9216-9d9709605e39', GETDATE() - 2, 160.00, 'Completed', 'Extra raita with biryani');
+SET @Order2 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('32e6f8ff-7a38-472e-a9f9-52baefdde500', GETDATE() - 4, 170.00, 'Completed', 'Make it spicy');
+SET @Order3 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('32e6f8ff-7a38-472e-a9f9-52baefdde500', GETDATE() - 1, 290.00, 'Preparing', 'Pack separately');
+SET @Order4 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('9844cf2b-1774-44cc-9d88-16113bbea644', GETDATE() - 3, 120.00, 'Completed', 'Extra spicy and tamarind');
+SET @Order5 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('9844cf2b-1774-44cc-9d88-16113bbea644', GETDATE(), 160.00, 'Pending', 'Less oil in biryani');
+SET @Order6 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('ca9ce714-cda9-4531-9486-501f4a6a86b9', GETDATE() - 2, 200.00, 'Completed', 'No onions in burger');
+SET @Order7 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('dccb4099-b611-4242-ba9e-c1cf6abd1c65', GETDATE() - 1, 180.00, 'Completed', 'Extra portion of fries');
+SET @Order8 = SCOPE_IDENTITY();
+
+INSERT INTO Orders (UserID, OrderDate, TotalAmount, Status, SpecialInstructions)
+VALUES ('ea993d0e-fad4-44ce-a5f7-b7aa211bf7b2', GETDATE(), 360.00, 'Completed', 'Office lunch order');
+SET @Order9 = SCOPE_IDENTITY();
+
+-- Insert order items using the actual OrderID variables
+INSERT INTO OrderItems (OrderID, MealID, Quantity, UnitPrice, TotalPrice)
+VALUES
+-- Order 1: Ratin - Burger + Fries
+(@Order1, @BurgerId, 1, 200.00, 200.00),
+(@Order1, @FriesId, 1, 50.00, 50.00),
+
+-- Order 2: Ratin - Biryani + Borhani
+(@Order2, @BiryaniId, 1, 120.00, 120.00),
+(@Order2, @BorhaniId, 1, 40.00, 40.00),
+
+-- Order 3: Amer - Beef Bhuna + Borhani
+(@Order3, @BeefBhunaId, 1, 130.00, 130.00),
+(@Order3, @BorhaniId, 1, 40.00, 40.00),
+
+-- Order 4: Amer - Burger + Fries + Borhani
+(@Order4, @BurgerId, 1, 200.00, 200.00),
+(@Order4, @FriesId, 1, 50.00, 50.00),
+(@Order4, @BorhaniId, 1, 40.00, 40.00),
+
+-- Order 5: Arif - 3 Fuchka
+(@Order5, @FuchkaId, 3, 40.00, 120.00),
+
+-- Order 6: Arif - Biryani + Borhani
+(@Order6, @BiryaniId, 1, 120.00, 120.00),
+(@Order6, @BorhaniId, 1, 40.00, 40.00),
+
+-- Order 7: Rayaan - Only Burger
+(@Order7, @BurgerId, 1, 200.00, 200.00),
+
+-- Order 8: Lamisa - Beef Bhuna + Fries
+(@Order8, @BeefBhunaId, 1, 130.00, 130.00),
+(@Order8, @FriesId, 1, 50.00, 50.00),
+
+-- Order 9: Admin - Burger + Biryani + Borhani
+(@Order9, @BurgerId, 1, 200.00, 200.00),
+(@Order9, @BiryaniId, 1, 120.00, 120.00),
+(@Order9, @BorhaniId, 1, 40.00, 40.00);
+
+-- Verify the data
+PRINT 'Orders and OrderItems inserted successfully!';
+
+-- Show orders with user details
+SELECT 
+    o.OrderID,
+    u.UserName,
+    u.Email,
+    o.OrderDate,
+    o.TotalAmount,
+    o.Status,
+    o.SpecialInstructions
+FROM Orders o
+INNER JOIN AspNetUsers u ON o.UserID = u.Id
+ORDER BY o.OrderDate DESC;
+
+-- Show order details with items
+SELECT 
+    o.OrderID,
+    u.UserName,
+    m.Name AS ItemName,
+    oi.Quantity,
+    oi.UnitPrice,
+    oi.TotalPrice
+FROM OrderItems oi
+INNER JOIN Orders o ON oi.OrderID = o.OrderID
+INNER JOIN AspNetUsers u ON o.UserID = u.Id
+INNER JOIN MenuItems m ON oi.MealID = m.ItemId
+ORDER BY o.OrderID;
