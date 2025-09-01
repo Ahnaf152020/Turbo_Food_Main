@@ -32,6 +32,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         SeedDataService.Initialize(services);
+        OrderSeedService.Initialize(services);
     }
     catch (Exception ex)
     {
