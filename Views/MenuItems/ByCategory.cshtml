@@ -1,0 +1,54 @@
+﻿@model IEnumerable<MenuItem>
+
+@{
+    ViewData["Title"] = $"Menu Items - {ViewBag.Category}";
+}
+
+<h1>@ViewBag.Category Menu</h1>
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">Back to Full Menu</a>
+    <a asp-action="Available" class="btn btn-success ms-2">View Available Items</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No menu items found in this category.
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">@item.Description</p>
+                        <p class="card-text">
+                            <strong>Price: </strong>@item.Price.ToString("C")<br />
+                            <strong>Status: </strong>
+                            @if (item.Availability)
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Unavailable</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Details" asp-route-id="@item.ItemId" class="btn btn-primary btn-sm">View Details</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-warning btn-sm">Edit</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
