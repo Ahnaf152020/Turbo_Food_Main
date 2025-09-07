@@ -17,6 +17,11 @@ namespace Turbo_Food_Main.Controllers
         {
             return View();
         }
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+
 
         public IActionResult Privacy()
         {
