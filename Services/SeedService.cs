@@ -16,16 +16,13 @@ namespace Turbo_Food_Main.Services
 
             try
             {
-                // Ensure the database is ready
                 logger.LogInformation("Ensuring the database is created.");
                 await context.Database.EnsureCreatedAsync();
 
-                // Add roles
                 logger.LogInformation("Seeding roles.");
                 await AddRoleAsync(roleManager, "Admin");
                 await AddRoleAsync(roleManager, "User");
 
-                // Add admin user
                 logger.LogInformation("Seeding admin user.");
                 var adminEmail = "admin@turbofood.com";
                 if (await userManager.FindByEmailAsync(adminEmail) == null)
