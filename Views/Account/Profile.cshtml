@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Profile";
-    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container py-5">
@@ -14,26 +14,28 @@
                     <h3>@Model.Name's Profile</h3>
                 </div>
                 <div class="card-body text-center">
-                    
+
                     <div class="mb-3 text-start">
                         <label class="form-label fw-bold">Full Name</label>
                         <input type="text" class="form-control" value="@Model.Name" readonly />
                     </div>
 
-         
                     <div class="mb-3 text-start">
                         <label class="form-label fw-bold">Email</label>
                         <input type="email" class="form-control" value="@Model.Email" readonly />
                     </div>
 
                     <div class="mt-4">
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Orders" asp-action="History" class="btn btn-info me-2">
+                                My Order History
+                            </a>
+                        }
+
                         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary me-2">
                             Back to Home
                         </a>
-                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                           
-                        </form>
                     </div>
                 </div>
             </div>
