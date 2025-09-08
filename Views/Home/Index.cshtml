@@ -1,8 +1,120 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-section d-flex align-items-center text-white">
+    <div class="container text-center hero-content">
+        <h1 class="display-4 fw-bold">Fuel Your Body With Healthy Choices</h1>
+        <p class="lead mt-3">Fresh, delicious meals delivered to your table.</p>
+        <a asp-area="" asp-controller="MenuItems" asp-action="Index"
+           class="btn btn-gradient btn-lg mt-4">Explore the Menu</a>
+    </div>
+</section>
+
+
+<section class="promo-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/066/921/327/small_2x/food-on-workplace-delivery-of-healthy-food-application-in-cellphone-with-white-blank-space-on-office-table-photo.jpg"
+                     class="img-fluid rounded shadow-sm promo-img"
+                     alt="Healthy Woman">
+            </div>
+
+            <div class="col-md-6 text-center text-md-start mt-4 mt-md-0 bg-light p-4 rounded">
+                <h2 class="fw-bold">Feed Your Desires, Save Your Wallet!</h2>
+                <p class="lead text-muted">Enjoy your favorite flavors without overspending. Treat yourself guilt-free!</p>
+                <a href="#" class="btn btn-outline-success btn-hover">Get 25% Off This Week</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="categories-section py-5 bg-light">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-5"> Categories We Have</h2>
+        <div class="row g-4">
+
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="https://preview.redd.it/discover-the-best-indian-snacks-a-curated-list-for-every-v0-xknk4u9q5pee1.jpg?width=1080&crop=smart&auto=webp&s=2f962b285b3b46ed2d69b67dfa8752fb88521147" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Snacks</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/breakfast.webp" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Breakfast</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/lunch1.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Lunch</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/set menu.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Set Menu</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/salad.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Salad</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/fastfood.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Fastfood</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/bangla.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Bangali Food</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="~/images/dessert.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Dessert</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card category-card h-50 shadow-sm text-center">
+                    <img src="https://img.freepik.com/premium-vector/picture-drinks-cocktails-with-picture-cocktail_1187092-26244.jpg" class="card-img-top" alt="Green Goddess Salad">
+                    <div class="card-body">
+                        <h5 class="card-title">Drinks</h5>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+
+

@@ -4,51 +4,180 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Turbo Food</title>
-    <script type="importmap"></script>
+
+    
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Turbo_Food_Main.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/demo_Turbo.styles.css" asp-append-version="true" />
+
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+    <style>
+    
+        .navbar-gradient {
+            background: linear-gradient(90deg, #fff3e0, #ffcc80, #ffb74d);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .nav-link {
+            color: #4e342e;
+            font-weight: 500;
+            margin: 0 4px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            color: #bf360c;
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: #ffb74d;
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .navbar-brand span {
+            color: #bf360c;
+            letter-spacing: 0.5px;
+        }
+
+      
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('https://static.tildacdn.com/tild3464-6635-4237-b638-363138643531/image.png') center/cover no-repeat;
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            animation: fadeInDown 1.5s;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            animation: fadeIn 2s;
+        }
+
+        
+        .btn-gradient {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: #fff;
+            border: none;
+            transition: all 0.4s;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(45deg, #20c997, #28a745);
+            transform: translateY(-3px);
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+   
+        .category-card img,
+        .meal-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+        .category-card img:hover,
+        .meal-card img:hover {
+            transform: scale(1.05);
+        }
+        .category-card .card-body,
+        .meal-card .card-body {
+            text-align: center;
+        }
+
+        @@keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @@keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm navbar-gradient">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Turbo Food</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+ 
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.jpeg" alt="Turbo Food Logo" width="40" height="40" class="me-2">
+                    <span class="fw-bold fs-5">Turbo Food</span>
+                </a>
+
+
+          
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="MenuItems" asp-action="Index">Menu</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="MenuItems" asp-action="Index">Menu</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="AboutUs">About Us</a></li>
+                        
                         <partial name="_LoginPartial" />
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
+ 
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Turbo_Food_Main - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+  
+    <footer class="border-top footer text-muted mt-3">
+        <div class="container text-center py-2 small">
+            &copy; @DateTime.Now.Year - Turbo Food. All Rights Reserved.
+            | <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+   
+    <script src="https://kit.fontawesome.com/your-kit-code.js" crossorigin="anonymous"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+    <script>
+     
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.navbar-nav .nav-link');
+            const currentUrl = window.location.pathname.toLowerCase();
+            links.forEach(link => {
+                if (link.getAttribute('href')?.toLowerCase() === currentUrl) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
