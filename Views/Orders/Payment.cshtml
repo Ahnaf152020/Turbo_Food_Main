@@ -1,0 +1,69 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<div class="container mt-4">
+    <h2>Payment</h2>
+    <div class="card p-4 shadow-sm">
+        <p>Enter your payment details below:</p>
+        <div class="mb-3">
+            <label>Card Number</label>
+            <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
+        </div>
+        <div class="mb-3">
+            <label>Expiry Date</label>
+            <input type="text" class="form-control" placeholder="MM/YY">
+        </div>
+        <div class="mb-3">
+            <label>CVV</label>
+            <input type="text" class="form-control" placeholder="XXX">
+        </div>
+        <div class="d-flex justify-content-between flex-wrap">
+            <button class="btn btn-secondary mb-2" id="backToCartBtn">Back to Cart</button>
+            <button class="btn btn-success mb-2" id="confirmOrderBtn">Confirm Order</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backToCartUrl = '@Url.Action("Cart", "Orders")';  
+            const homeUrl = '@Url.Action("Index", "Home")';
+            const confirmOrderUrl = '@Url.Action("ConfirmOrder", "Orders")';
+
+            document.getElementById('backToCartBtn').addEventListener('click', function() {
+                window.location.href = backToCartUrl;
+            });
+
+            document.getElementById('confirmOrderBtn').addEventListener('click', function() {
+                const cart = JSON.parse(localStorage.getItem('foodCart')) || [];
+                if(cart.length === 0) {
+                    alert("Cart is empty!");
+                    return;
+                }
+
+                fetch(confirmOrderUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: cart })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        localStorage.removeItem('foodCart');
+                        alert("Order confirmed!");
+                        window.location.href = homeUrl;
+                    } else {
+                        alert("Failed to confirm order. Please try again.");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("An error occurred. Please try again.");
+                });
+            });
+        });
+    </script>
+}

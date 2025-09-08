@@ -4,69 +4,7 @@
     ViewData["Title"] = "Menu Items";
 }
 
-@if (User.IsInRole("Admin"))
-{
-    <div class="container-fluid mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="text-primary fw-bold">Everyday Menu Items</h1>
-            <a asp-action="Create" class="btn btn-primary btn-lg shadow-sm">Enter New Food</a>
-        </div>
-
-        <div class="mb-3">
-            <a asp-action="Available" class="btn btn-success me-2 shadow-sm">View Available Items</a>
-            <a asp-action="ByCategory" asp-route-category="Burgers" class="btn btn-outline-primary me-2 shadow-sm">Burgers</a>
-            <a asp-action="ByCategory" asp-route-category="Sides" class="btn btn-outline-primary me-2 shadow-sm">Sides</a>
-            <a asp-action="ByCategory" asp-route-category="Drinks" class="btn btn-outline-primary me-2 shadow-sm">Drinks</a>
-        </div>
-
-        <div class="mb-4">
-            <input id="searchBox" type="text" class="form-control search-box shadow-sm" placeholder="Search by name, category, or date...">
-        </div>
-
-        @foreach (var dayGroup in Model.GroupBy(m => m.CreatedAt.Date).OrderByDescending(g => g.Key))
-        {
-            <div class="mb-4 menu-day-group" data-day="@dayGroup.Key.ToString("dd MMM yyyy")">
-                <h5 class="text-secondary mb-3 border-bottom pb-2">@dayGroup.Key.ToString("dddd, yyyy-MM-dd")</h5>
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    @foreach (var item in dayGroup)
-                    {
-                        <div class="col">
-                            <div class="menu-card card h-100 shadow-sm menu-item"
-                                 data-name="@item.Name.ToLower()"
-                                 data-category="@item.Category.ToLower()"
-                                 data-day="@item.CreatedAt.ToString("dd MMM yyyy").ToLower()">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="card-title mb-0">@item.Name</h5>
-                                        <span class="badge category-badge">@item.Category</span>
-                                    </div>
-                                    <p class="card-text text-muted flex-grow-1">@item.Description</p>
-
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="price-text fw-bold">@item.Price.ToString("C")</span>
-                                        <span class="badge @(item.Availability ? "bg-success" : "bg-danger") availability-badge">
-                                            @(item.Availability ? "Available" : "Unavailable")
-                                        </span>
-                                    </div>
-
-                                    <div class="d-flex gap-2 mt-auto">
-                                        <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-outline-primary btn-sm flex-fill">
-                                            <i class="bi bi-pencil-fill"></i> Edit
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm flex-fill">
-                                            <i class="bi bi-trash-fill"></i> Delete
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
-    </div>
-}
-else
+@if (!User.IsInRole("Admin"))
 {
     <div class="container-fluid mt-4 position-relative">
         <div class="row">
@@ -88,8 +26,12 @@ else
             </div>
 
             <div class="col-md-9" id="menuItemsRow">
-                <div class="mb-3">
-                    <input id="searchBox" type="text" class="form-control" placeholder="Search by name, category, or date...">
+               
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <input id="searchBox" type="text" class="form-control flex-grow-1" placeholder="Search by name, category, or date...">
+                    <button id="cartBtn" class="btn btn-warning">
+                        Cart (<span id="cartCount">0</span>)
+                    </button>
                 </div>
 
                 @foreach (var dayGroup in Model.GroupBy(m => m.CreatedAt.Date).OrderByDescending(g => g.Key))
@@ -139,10 +81,10 @@ else
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
 
     .card-title {
         font-size: 1.1rem;
@@ -154,13 +96,12 @@ else
     }
 
     #searchBox {
-        max-width: 400px;
+        max-width: 100%;
     }
 
-    .btn-lg {
-        padding: 0.5rem 1.25rem;
-        font-size: 1rem;
-        border-radius: 0.35rem;
+    #cartBtn {
+        white-space: nowrap;
+        height: 38px; 
     }
 
     .menu-card {
@@ -174,12 +115,6 @@ else
             transform: translateY(-7px);
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18);
         }
-
-    .card-title {
-        font-size: 1.15rem;
-        font-weight: 600;
-        color: #343a40;
-    }
 
     .category-badge {
         background: linear-gradient(135deg, #6c757d, #495057);
@@ -199,23 +134,24 @@ else
         color: #0d6efd;
     }
 
-    .search-box {
-        max-width: 450px;
-        border-radius: 10px;
-    }
-
-    .btn-lg, .btn-sm {
-        border-radius: 8px;
-    }
-
-    .card-text {
-        font-size: 0.9rem;
-        color: #495057;
-    }
-
     h5.text-secondary {
         font-weight: 600;
         color: #0d6efd;
+    }
+
+    
+    @@media (max-width: 576px) {
+        .d-flex.align-items-center.gap-2
+
+    {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #cartBtn {
+        width: 100%;
+    }
+
     }
 </style>
 
@@ -231,7 +167,7 @@ else
                     const category = item.dataset.category;
                     const day = item.dataset.day;
                     if (name.includes(query) || category.includes(query) || day.includes(query)) {
-                        item.parentElement.style.display = ''; 
+                        item.parentElement.style.display = '';
                     } else {
                         item.parentElement.style.display = 'none';
                     }
@@ -243,7 +179,16 @@ else
                 });
             });
         }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('foodCart')) || [];
+            document.getElementById('cartCount').innerText = cart.length;
+        }
+
+        document.getElementById('cartBtn').addEventListener('click', function() {
+            window.location.href = '@Url.Action("Cart", "Orders")';
+        });
+
+        updateCartCount();
     </script>
 }
-
-                        

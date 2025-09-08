@@ -15,13 +15,13 @@ namespace Turbo_Food_Main.Controllers
             _context = context;
         }
 
-        // GET: MenuItems
+        
         public async Task<IActionResult> Index()
         {
             return View(await _context.MenuItems.ToListAsync());
         }
 
-        // GET: MenuItems/Details/5
+       
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -39,14 +39,14 @@ namespace Turbo_Food_Main.Controllers
             return View(menuItem);
         }
 
-        // GET: MenuItems/Create
+       
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: MenuItems/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -61,7 +61,7 @@ namespace Turbo_Food_Main.Controllers
             return View(menuItem);
         }
 
-        // GET: MenuItems/Edit/5
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -78,7 +78,7 @@ namespace Turbo_Food_Main.Controllers
             return View(menuItem);
         }
 
-        // POST: MenuItems/Edit/5
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -113,7 +113,7 @@ namespace Turbo_Food_Main.Controllers
             return View(menuItem);
         }
 
-        // GET: MenuItems/Delete/5
+       
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -132,7 +132,7 @@ namespace Turbo_Food_Main.Controllers
             return View(menuItem);
         }
 
-        // POST: MenuItems/Delete/5
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -148,7 +148,7 @@ namespace Turbo_Food_Main.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: MenuItems/ByCategory?category=Burgers
+    
         public async Task<IActionResult> ByCategory(string category)
         {
             if (string.IsNullOrEmpty(category))
@@ -164,7 +164,6 @@ namespace Turbo_Food_Main.Controllers
             return View(items);
         }
 
-        // GET: MenuItems/Available
         public async Task<IActionResult> Available()
         {
             var items = await _context.MenuItems

@@ -27,8 +27,6 @@
                     <span class="badge bg-danger">Unavailable</span>
                 }
             </p>
-            
-            
         </div>
         <div class="card-footer d-flex justify-content-between">
             @if (User.IsInRole("Admin"))
@@ -37,9 +35,50 @@
             }
             else
             {
-                <a asp-action="AddToCart" asp-route-id="@Model.ItemId" class="btn btn-primary">Add to Cart</a>
+                <button class="btn btn-primary"
+                        onclick="handleAddToCart(@Model.ItemId, '@Model.Name', @Model.Price, '@Model.Category', @(Model.Availability.ToString().ToLower()))">
+                    Add to Cart
+                </button>
             }
             <a asp-action="Index" class="btn btn-secondary">Back to List</a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function handleAddToCart(id, name, price, category, available) {
+            
+
+            
+            var isLoggedIn = '@User.Identity.IsAuthenticated'.toLowerCase() === 'true';
+            if (!isLoggedIn) {
+                alert("Please login first!");
+                return;
+            }
+
+            
+            if (!available) {
+                alert("Choose another item! This one is unavailable.");
+                return;
+            }
+
+            
+            let cart = JSON.parse(localStorage.getItem('foodCart')) || [];
+
+            
+            let existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+                existingItem.totalPrice = existingItem.quantity * existingItem.price;
+            } else {
+                cart.push({ id, name, price, category, quantity: 1, totalPrice: price });
+            }
+
+            
+            localStorage.setItem('foodCart', JSON.stringify(cart));
+
+            alert(name + " added to cart!");
+        }
+    </script>
+}
