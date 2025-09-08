@@ -4,53 +4,73 @@
     ViewData["Title"] = "Create Menu Item";
 }
 
-<h1>Create Menu Item</h1>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg w-100" style="max-width: 550px; border-radius: 12px;">
+        <div class="card-header bg-success text-white fw-bold text-center">
+            Enter New Food
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control shadow-sm rounded" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control shadow-sm rounded" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="Category" class="form-label fw-bold"></label>
+                    <input asp-for="Category" class="form-control shadow-sm rounded" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label fw-bold"></label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control shadow-sm rounded" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" type="number" step="0.01" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
+                <div class="form-check form-switch mb-3">
+                    <input asp-for="Availability" class="form-check-input" id="AvailabilitySwitch" checked />
+                    <label asp-for="Availability" class="form-check-label fw-bold" for="AvailabilitySwitch">Available</label>
+                </div>
 
-            <div class="form-group form-check mb-3">
-                <input asp-for="Availability" class="form-check-input" checked />
-                <label asp-for="Availability" class="form-check-label"></label>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+                <div class="d-flex justify-content-center gap-2">
+                    <input type="submit" value="Create" class="btn btn-success shadow-sm flex-fill" />
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm flex-fill">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+<style>
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+
+    .form-control {
+        border-radius: 8px;
+    }
+
+    .btn {
+        border-radius: 8px;
+    }
+</style>
+
+@section Scripts {
+    @(await Html.PartialAsync("_ValidationScriptsPartial"))
 }
+
