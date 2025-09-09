@@ -14,6 +14,11 @@ namespace Turbo_Food_Main.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        // New DbSets
+        public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -64,6 +69,73 @@ namespace Turbo_Food_Main.Data
                       .WithMany()
                       .HasForeignKey(oi => oi.MealID)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure Vendor entity
+            modelBuilder.Entity<Vendor>(entity =>
+            {
+                entity.HasKey(e => e.VendorID);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PhoneNum).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Address).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                // Unique constraint for email
+                entity.HasIndex(v => v.Email).IsUnique();
+            });
+
+            // Configure Feedback entity
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.HasKey(e => e.FeedbackID);
+                entity.Property(e => e.Rating).IsRequired();
+                entity.Property(e => e.Message).HasMaxLength(1000);
+                entity.Property(e => e.DateSubmitted).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.IsReviewed).HasDefaultValue(false);
+                entity.Property(e => e.AdminNotes).HasMaxLength(500);
+
+                // Check constraint for rating
+                entity.HasCheckConstraint("CK_Feedback_Rating", "[Rating] BETWEEN 1 AND 5");
+
+                // Relationships
+                entity.HasOne(f => f.User)
+                      .WithMany()
+                      .HasForeignKey(f => f.UserID)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(f => f.Order)
+                      .WithMany()
+                      .HasForeignKey(f => f.OrderID)
+                      .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // Configure Payment entity
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(e => e.PaymentID);
+                entity.Property(e => e.AmountPaid).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.PaymentMethod).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.PaymentDate).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.TransactionID).HasMaxLength(100);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(20).HasDefaultValue("Pending");
+
+                // Check constraints
+                entity.HasCheckConstraint("CK_Payment_AmountPaid", "[AmountPaid] > 0");
+                entity.HasCheckConstraint("CK_Payment_Status",
+                    "[Status] IN ('Pending', 'Completed', 'Failed', 'Refunded')");
+
+                // Relationships
+                entity.HasOne(p => p.Order)
+                      .WithMany()
+                      .HasForeignKey(p => p.OrderID)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(p => p.User)
+                      .WithMany()
+                      .HasForeignKey(p => p.UserID)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             // REMOVED HasData seeding to avoid migration errors
