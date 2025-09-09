@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Turbo_Food_Main.Data;
 using Turbo_Food_Main.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Turbo_Food_Main.ViewModels;
 
 public class OrdersController : Controller
 {
@@ -60,6 +61,32 @@ public class OrdersController : Controller
         await _context.SaveChangesAsync();
         return Json(new { success = true });
     }
+    public async Task<IActionResult> History()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return RedirectToAction("Login", "Account");
+
+        var history = await _context.OrderItems
+            .Include(oi => oi.Order)
+            .Include(oi => oi.MenuItem)
+            .Where(oi => oi.Order.UserID == user.Id)
+            .OrderByDescending(oi => oi.Order.OrderDate)
+            .Select(oi => new OrderHistoryViewModel
+            {
+                OrderID = oi.OrderID,
+                OrderDate = oi.Order.OrderDate,
+                Status = oi.Order.Status,
+                MealID = oi.MealID,
+                MealName = oi.MenuItem.Name,
+                Quantity = oi.Quantity,
+                UnitPrice = oi.UnitPrice,
+                TotalPrice = oi.TotalPrice
+            })
+            .ToListAsync();
+
+        return View(history);
+    }
+
 }
 
 public class CartRequest
