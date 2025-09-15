@@ -1,4 +1,4 @@
-﻿﻿@using Turbo_Food_Main.ViewModels;
+﻿@using Turbo_Food_Main.ViewModels;
 @model LoginViewModel;
 
 @{
@@ -19,7 +19,12 @@
             </div>
             <div class="mb-3">
                 <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="Password" class="form-control" type="password" id="passwordField" />
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                        Show
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="float-end">
@@ -48,4 +53,38 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password field toggle
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#passwordField');
+
+            togglePassword.addEventListener('click', function() {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // Toggle the button text
+                this.textContent = type === 'text' ? 'Hide' : 'Show';
+            });
+        });
+    </script>
+
+    <style>
+        .input-group .btn {
+            border-left: 0;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            min-width: 65px;
+        }
+
+        .input-group .form-control:focus {
+            z-index: 3;
+        }
+
+            .input-group .form-control:focus + .btn {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+    </style>
 }
