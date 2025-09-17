@@ -172,10 +172,7 @@ namespace Turbo_Food_Main.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<bool>("IsReviewed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    
 
                     b.Property<string>("Message")
                         .HasMaxLength(1000)
