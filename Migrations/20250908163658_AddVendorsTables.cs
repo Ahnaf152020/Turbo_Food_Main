@@ -22,7 +22,6 @@ namespace Turbo_Food_Main.Migrations
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     DateSubmitted = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    IsReviewed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     AdminNotes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>

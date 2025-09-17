@@ -93,8 +93,7 @@ namespace Turbo_Food_Main.Data
                 entity.Property(e => e.Rating).IsRequired();
                 entity.Property(e => e.Message).HasMaxLength(1000);
                 entity.Property(e => e.DateSubmitted).HasDefaultValueSql("GETUTCDATE()");
-                entity.Property(e => e.IsReviewed).HasDefaultValue(false);
-                entity.Property(e => e.AdminNotes).HasMaxLength(500);
+                entity.Property(e => e.MenuItemId).IsRequired(false);
 
                 // Check constraint for rating
                 entity.HasCheckConstraint("CK_Feedback_Rating", "[Rating] BETWEEN 1 AND 5");
@@ -109,6 +108,11 @@ namespace Turbo_Food_Main.Data
                       .WithMany()
                       .HasForeignKey(f => f.OrderID)
                       .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(f => f.MenuItem)
+                .WithMany()
+                .HasForeignKey(f => f.MenuItemId)
+                .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configure Payment entity
