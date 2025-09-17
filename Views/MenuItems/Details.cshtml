@@ -48,25 +48,16 @@
 @section Scripts {
     <script>
         function handleAddToCart(id, name, price, category, available) {
-            
-
-            
             var isLoggedIn = '@User.Identity.IsAuthenticated'.toLowerCase() === 'true';
             if (!isLoggedIn) {
                 alert("Please login first!");
                 return;
             }
-
-            
             if (!available) {
                 alert("Choose another item! This one is unavailable.");
                 return;
             }
-
-            
             let cart = JSON.parse(localStorage.getItem('foodCart')) || [];
-
-            
             let existingItem = cart.find(item => item.id === id);
             if (existingItem) {
                 existingItem.quantity += 1;
@@ -74,11 +65,153 @@
             } else {
                 cart.push({ id, name, price, category, quantity: 1, totalPrice: price });
             }
-
-            
             localStorage.setItem('foodCart', JSON.stringify(cart));
-
             alert(name + " added to cart!");
         }
     </script>
+    <script>
+        // Load feedbacks for this menu item
+        (function(){
+            const itemId = @Model.ItemId;
+            fetch(`@Url.Action("ForMenuItem","Feedbacks")?id=${itemId}`)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('menu-feedbacks').innerHTML = html;
+                });
+        })();
+
+        function checkUserReviewForm() {
+            const itemId = @Model.ItemId;
+            fetch(`/Feedbacks/GetUserReview?menuItemId=${itemId}`)
+                .then(resp => {
+                    if (resp.ok) return resp.json();
+                    throw new Error();
+                })
+                .then(data => {
+                    document.getElementById('edit-review-form').style.display = '';
+                    document.getElementById('submit-review-form').style.display = 'none';
+                    document.getElementById('edit-feedback-id').value = data.id;
+                    document.getElementById('edit-rating').value = data.rating;
+                    document.getElementById('edit-message').value = data.message || '';
+                })
+                .catch(() => {
+                    document.getElementById('edit-review-form').style.display = 'none';
+                    document.getElementById('submit-review-form').style.display = '';
+                });
+        }
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fd = new FormData(form);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const resp = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                body: fd
+            });
+            if (resp.ok) {
+                const html = await resp.text();
+                document.getElementById('menu-feedbacks').innerHTML = html;
+                form.reset();
+                checkUserReviewForm(); // <-- update form after submit
+            } else if (resp.status === 401) {
+                alert('Please login to submit a review.');
+            } else {
+                alert('Failed to submit review.');
+            }
+        }
+
+        async function editReview(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fd = new FormData(form);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const resp = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                body: fd
+            });
+            if (resp.ok) {
+                const html = await resp.text();
+                document.getElementById('menu-feedbacks').innerHTML = html;
+            } else {
+                alert('Failed to update review.');
+            }
+        }
+    </script>
+    @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+    {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            checkUserReviewForm();
+        });
+    </script>
+    }
+}
+
+<div class="container mt-4">
+    <div id="menu-feedbacks">
+        <!-- feedbacks will load here -->
+    </div>
+
+    @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+    {
+    <div id="review-section">
+        <div id="submit-review-form" style="display:none;">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5>Leave a Review</h5>
+                    <form asp-controller="Feedbacks" asp-action="Create" method="post" onsubmit="submitReview(event)">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="menuItemId" value="@Model.ItemId" />
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message (optional)</label>
+                            <textarea name="message" class="form-control" rows="3" maxlength="1000"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="edit-review-form" style="display:none;">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5>Edit Your Review</h5>
+                    <form id="editReviewForm" asp-controller="Feedbacks" asp-action="Edit" method="post" onsubmit="editReview(event)">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="feedbackId" id="edit-feedback-id" />
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <select name="rating" id="edit-rating" class="form-select" required>
+                                <option value="">Select...</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message (optional)</label>
+                            <textarea name="message" id="edit-message" class="form-control" rows="3" maxlength="1000"></textarea>
+                        </div>
+                        <button class="btn btn-success" type="submit">Update Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 }

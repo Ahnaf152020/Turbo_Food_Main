@@ -1,0 +1,30 @@
+@model IEnumerable<Turbo_Food_Main.Models.Feedback>
+
+@{
+    ViewData["Title"] = "Product Reviews";
+}
+
+<div class="container mt-4">
+    <h3>Reviews for @ViewBag.MenuItemName</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Rating</th>
+                <th>Message</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var f in Model)
+            {
+                <tr>
+                    <td>@(f.User?.UserName ?? "Guest")</td>
+                    <td>@f.Rating</td>
+                    <td>@f.Message</td>
+                    <td>@f.DateSubmitted.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

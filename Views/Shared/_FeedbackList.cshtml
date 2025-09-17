@@ -1,0 +1,27 @@
+@model IEnumerable<Turbo_Food_Main.Models.Feedback>
+
+<div id="feedback-list">
+    @if (!Model.Any())
+    {
+        <p class="text-muted">No reviews yet. Be the first to review!</p>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var f in Model)
+            {
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <strong>@(f.User?.UserName ?? "Guest")</strong>
+                        <small class="text-muted">@f.DateSubmitted.ToLocalTime().ToString("g")</small>
+                    </div>
+                    <div>Rating: @for (int i=0;i<f.Rating;i++){<span>★</span>} @for (int i=f.Rating;i<5;i++){<span>☆</span>}</div>
+                    @if (!string.IsNullOrWhiteSpace(f.Message))
+                    {
+                        <p class="mt-2 mb-0">@f.Message</p>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>

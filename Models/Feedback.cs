@@ -27,14 +27,14 @@ namespace Turbo_Food_Main.Models
         [Required]
         public DateTime DateSubmitted { get; set; } = DateTime.UtcNow;
 
-        [Required]
-        public bool IsReviewed { get; set; } = false;
-
-        [MaxLength(500)]
-        public string? AdminNotes { get; set; }
+   
 
         // Navigation properties
         public virtual Users? User { get; set; }
         public virtual Order? Order { get; set; }
+        
+        // Link feedback to a menu item (optional)
+        public int? MenuItemId { get; set; }
+        public virtual MenuItem? MenuItem { get; set; }
     }
 }
