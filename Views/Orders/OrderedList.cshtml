@@ -1,0 +1,100 @@
+﻿@model List<Turbo_Food_Main.Models.Order>
+
+@{
+    ViewData["Title"] = "Ordered List";
+}
+
+<h2>Today's Ordered List</h2>
+
+@Html.AntiForgeryToken()
+
+<div id="orders-container">
+    
+    @foreach (var order in Model.OrderBy(o => o.OrderDate))
+    {
+        <div class="card mb-4 order-card" data-orderid="@order.OrderID">
+            <div class="card-header bg-secondary text-white">
+                <strong>@order.User.UserName</strong>
+                <span class="float-end">Order Date: @order.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered mb-3">
+                    <thead>
+                        <tr>
+                            <th>Meal Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.MenuItem.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.UnitPrice.ToString("C")</td>
+                                <td>@item.TotalPrice.ToString("C")</td>
+                                <td class="status-cell-@order.OrderID">@order.Status</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-end">
+                                <button class="btn btn-success btn-sm me-1 complete-btn"
+                                        onclick="updateStatus(@order.OrderID, 'Completed', this)">
+                                    Complete
+                                </button>
+                                <button class="btn btn-warning btn-sm me-1"
+                                        onclick="updateStatus(@order.OrderID, 'Pending')">
+                                    Pending
+                                </button>
+                                <button class="btn btn-danger btn-sm"
+                                        onclick="updateStatus(@order.OrderID, 'Cancelled')">
+                                    Cancel
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        async function updateStatus(orderId, status, btn = null) {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const response = await fetch('@Url.Action("UpdateStatus", "Orders")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify({ orderId: orderId, status: status })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                
+                document.querySelectorAll('.status-cell-' + orderId)
+                    .forEach(cell => cell.innerText = status);
+
+                alert('Order status updated!');
+
+                if (status === 'Completed' && btn) {
+                    
+                    let card = btn.closest('.order-card');
+                    let container = document.getElementById('orders-container');
+                    container.appendChild(card);
+                }
+            } else {
+                alert('Failed to update status');
+            }
+        }
+    </script>
+}
