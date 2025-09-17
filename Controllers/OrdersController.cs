@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Turbo_Food_Main.Data;
@@ -86,6 +87,43 @@ public class OrdersController : Controller
 
         return View(history);
     }
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> OrderedList()
+    {
+        var today = DateTime.UtcNow.Date; 
+        var orders = await _context.Orders
+            .Include(o => o.User)
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.MenuItem)
+            .Where(o => o.OrderDate.Date == today) 
+            .ToListAsync();
+
+        return View(orders);
+    }
+
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
+    public async Task<JsonResult> UpdateStatus([FromBody] OrderStatusUpdateRequest request)
+    {
+        var order = await _context.Orders.FindAsync(request.OrderId);
+        if (order == null) return Json(new { success = false });
+
+        order.Status = request.Status;
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
+
+        return Json(new { success = true });
+    }
+
+
+    public class OrderStatusUpdateRequest
+    {
+        public int OrderId { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
+
 
 }
 
