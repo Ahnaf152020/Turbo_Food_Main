@@ -2,8 +2,11 @@
 
 @{
     ViewData["Title"] = "My Order History";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<!-- Include required libraries in the head section -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-3">
@@ -14,7 +17,10 @@
             @if (!Model.Any())
             {
                 <div class="alert alert-warning text-center">
-                    You haven’t placed any orders yet.
+                    <i class="fas fa-history fa-2x mb-3"></i>
+                    <h4>You haven't placed any orders yet.</h4>
+                    <p class="mb-0">Start ordering from our delicious menu!</p>
+                    <a asp-controller="MenuItems" asp-action="Index" class="btn btn-primary mt-3">Browse Menu</a>
                 </div>
             }
             else
@@ -30,6 +36,7 @@
                                 <th>Quantity</th>
                                 <th>Unit Price</th>
                                 <th>Total Price</th>
+                                <th>Action</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -38,24 +45,205 @@
                                 <tr>
                                     <td>@item.OrderID</td>
                                     <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                    <td>@item.Status</td>
-                                    <td>@item.MealName</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.UnitPrice.ToString("C")</td>
-                                    <td>@item.TotalPrice.ToString("C")</td>
-                                </tr>
-                            }
+                                    <td>
+                                        <span class="badge
+                                                                    @(item.Status == "Completed" ? "bg-success" :
+                                                                                                                                                                                        item.Status == "Pending" ? "bg-warning" :
+                                                                                                                                                                                        item.Status == "Cancelled" ? "bg-danger" : "bg-info")">
+                                    @item.Status
+                                </span>
+                            </td>
+                            <td>@item.MealName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("C")</td>
+                            <td>@item.TotalPrice.ToString("C")</td>
+                            <td>
+                                <button class="btn btn-sm btn-info generate-invoice-btn"
+                                        data-order-id="@item.OrderID"
+                                        data-order-date="@item.OrderDate.ToString("yyyy-MM-dd HH:mm")"
+                                        data-meal-name="@item.MealName"
+                                        data-quantity="@item.Quantity"
+                                        data-unit-price="@item.UnitPrice.ToString("C")"
+                                        data-total-price="@item.TotalPrice.ToString("C")"
+                                        data-status="@item.Status">
+                                    <i class="fas fa-file-pdf me-1"></i> Invoice
+                                </button>
+                            </td>
+                        </tr>
+                                                }
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Hidden Invoice Template (for PDF) -->
+                <div id="invoice-template" style="display: none; padding: 20px; font-family: 'Arial'; background-color: white;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1 style="color: #17a2b8; margin: 0; font-size: 28px;">Turbo Food</h1>
+                        <p style="margin: 5px 0; color: #6c757d;">Fast and Delicious Delivery</p>
+                        <hr style="border-top: 2px solid #17a2b8; margin: 15px 0;">
+                    </div>
+
+                    <h3 style="color: #17a2b8; text-align: center; margin-bottom: 20px;">ORDER INVOICE</h3>
+
+                    <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                        <p style="margin: 5px 0;"><strong>Invoice Generated On:</strong> <span id="invoice-date"></span></p>
+                        <p style="margin: 5px 0;"><strong>Order ID:</strong> <span id="invoice-order-id"></span></p>
+                        <p style="margin: 5px 0;"><strong>Order Date:</strong> <span id="invoice-order-date"></span></p>
+                        <p style="margin: 5px 0;"><strong>Order Status:</strong> <span id="invoice-order-status"></span></p>
+                        <p style="margin: 5px 0;"><strong>Payment Reference:</strong> <span id="invoice-payment-id">N/A</span></p>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                        <thead>
+                            <tr style="background-color: #17a2b8; color: white;">
+                                <th style="border: 1px solid #dee2e6; padding: 12px; text-align: left;">Meal Name</th>
+                                <th style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">Quantity</th>
+                                <th style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">Unit Price</th>
+                                <th style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoice-items">
+                            
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="border: 1px solid #dee2e6; padding: 12px; text-align: right; font-weight: bold; background-color: #f8f9fa;">Grand Total:</td>
+                                <td id="invoice-grand-total" style="border: 1px solid #dee2e6; padding: 12px; text-align: right; font-weight: bold; background-color: #f8f9fa;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px dashed #dee2e6;">
+                        <p style="color: #6c757d; font-style: italic;">Thank you for choosing Turbo Food!</p>
+                        <p style="color: #6c757d; font-size: 0.9em;">For any queries, contact support@turbofood.com</p>
+                    </div>
+                </div>
             }
 
-            
             <div class="text-center mt-4">
                 <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
-                    Back to Home
+                    <i class="fas fa-home me-1"></i> Back to Home
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+    .table th {
+        border-top: none;
+        font-weight: 600;
+    }
+
+    .badge {
+        font-size: 0.85em;
+        padding: 0.5em 0.75em;
+    }
+
+    .generate-invoice-btn {
+        transition: all 0.3s ease;
+    }
+
+        .generate-invoice-btn:hover {
+            transform: scale(1.05);
+            background-color: #138496 !important;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const { jsPDF } = window.jspdf;
+
+            
+            const generateButtons = document.querySelectorAll('.generate-invoice-btn');
+
+            generateButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    generateInvoice(this);
+                });
+            });
+
+            function generateInvoice(button) {
+                
+                const orderId = button.getAttribute('data-order-id');
+                const orderDate = button.getAttribute('data-order-date');
+                const mealName = button.getAttribute('data-meal-name');
+                const quantity = button.getAttribute('data-quantity');
+                const unitPrice = button.getAttribute('data-unit-price');
+                const totalPrice = button.getAttribute('data-total-price');
+                const status = button.getAttribute('data-status');
+
+               
+                const invoice = document.getElementById('invoice-template');
+
+                // Populate invoice data
+                document.getElementById('invoice-order-id').textContent = orderId;
+                document.getElementById('invoice-order-date').textContent = orderDate;
+                document.getElementById('invoice-order-status').textContent = status;
+                document.getElementById('invoice-date').textContent = new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                
+                const itemsContainer = document.getElementById('invoice-items');
+                itemsContainer.innerHTML = ''; 
+
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="border: 1px solid #dee2e6; padding: 12px; font-weight: 500;">${mealName}</td>
+                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">${quantity}</td>
+                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">${unitPrice}</td>
+                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right; font-weight: bold;">${totalPrice}</td>
+                `;
+                itemsContainer.appendChild(row);
+
+                // Set the grand total
+                document.getElementById('invoice-grand-total').textContent = totalPrice;
+
+                // Make the invoice template visible temporarily for capturing
+                const originalDisplay = invoice.style.display;
+                invoice.style.display = 'block';
+
+                // Use html2canvas to capture the invoice div
+                html2canvas(invoice, {
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    
+                    invoice.style.display = originalDisplay;
+
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4'); 
+
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+
+                    const ratio = Math.min((pdfWidth - 20) / imgWidth, (pdfHeight - 20) / imgHeight);
+                    const imgX = (pdfWidth - imgWidth * ratio) / 2;
+                    const imgY = 10; 
+
+                    pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                    pdf.save(`TurboFood-Invoice-${orderId}.pdf`);
+                }).catch(error => {
+                    console.error('Error generating PDF:', error);
+                    invoice.style.display = originalDisplay;
+                    alert('Error generating invoice. Please try again.');
+                });
+            }
+        });
+    </script>
+}
