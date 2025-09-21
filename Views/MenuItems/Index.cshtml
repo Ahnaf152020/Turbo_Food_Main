@@ -2,8 +2,6 @@
 
 @{
     ViewData["Title"] = "Menu Items";
-}
-@{
     var today = DateTime.Today;
     var todaysItems = Model.Where(m => m.CreatedAt.Date == today).ToList();
     var todayCategories = todaysItems.Select(i => i.Category).Distinct().ToList();
@@ -25,7 +23,7 @@
         </div>
 
         <div class="mb-4">
-            <input id="searchBox" type="text" class="form-control search-box shadow-sm" placeholder="Search by name, category, or date...">
+            <input id="searchBoxAdmin" type="text" class="form-control search-box shadow-sm" placeholder="Search by name, category, or date...">
         </div>
 
         @foreach (var dayGroup in Model.GroupBy(m => m.CreatedAt.Date).OrderByDescending(g => g.Key))
@@ -73,9 +71,6 @@
 }
 else
 {
-
-
-
     <div class="container-fluid mt-4 position-relative">
         <div class="row">
             <div class="col-md-3">
@@ -96,17 +91,15 @@ else
             </div>
 
             <div class="col-md-9" id="menuItemsRow">
-
                 <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                    <input id="searchBox" type="text" class="form-control flex-grow-1" placeholder="Search today's items by name or category...">
+                    <input id="searchBoxUser" type="text" class="form-control flex-grow-1" placeholder="Search today's items by name or category...">
                     <button id="cartBtn" type="button" class="btn btn-warning">
                         Cart (<span id="cartCount">0</span>)
                     </button>
                 </div>
 
-
                 <div class="mb-3" id="categoryFilters">
-                    <button type="button" class="btn btn-outline-primary me-2 shadow-sm category-btn" data-category="all">All</button>
+                    <button type="button" class="btn btn-primary me-2 shadow-sm category-btn active" data-category="all">All</button>
                     @foreach (var cat in todayCategories)
                     {
                         <button type="button" class="btn btn-outline-primary me-2 shadow-sm category-btn" data-category="@cat.ToLower()">@cat</button>
@@ -160,74 +153,137 @@ else
             </div>
         </div>
     </div>
+}
 
-    @section Scripts {
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const searchBox = document.getElementById('searchBox');
-                const categoryButtons = Array.from(document.querySelectorAll('.category-btn'));
-                const items = Array.from(document.querySelectorAll('.todays-items .menu-item'));
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if we're in admin or user view
+            const isAdminView = @(User.IsInRole("Admin").ToString().ToLower());
+
+            if (isAdminView) {
+                // Admin view filtering
+                const searchBoxAdmin = document.getElementById('searchBoxAdmin');
+                const menuDayGroups = document.querySelectorAll('.menu-day-group');
+                const menuItems = document.querySelectorAll('.menu-item');
+
+                function filterAdminMenuItems() {
+                    const searchText = searchBoxAdmin.value.toLowerCase().trim();
+                    let anyVisibleGroup = false;
+
+                    menuDayGroups.forEach(group => {
+                        const dayText = group.getAttribute('data-day').toLowerCase();
+                        const itemsInGroup = group.querySelectorAll('.menu-item');
+                        let visibleItemsInGroup = 0;
+
+                        itemsInGroup.forEach(item => {
+                            const itemName = item.getAttribute('data-name');
+                            const itemCategory = item.getAttribute('data-category');
+                            const itemDay = item.getAttribute('data-day');
+
+                            // Check if item matches search text
+                            const searchMatch = searchText === '' ||
+                                               itemName.includes(searchText) ||
+                                               itemCategory.includes(searchText) ||
+                                               dayText.includes(searchText) ||
+                                               itemDay.includes(searchText);
+
+                            // Show or hide item based on search
+                            if (searchMatch) {
+                                item.closest('.col').style.display = 'block';
+                                visibleItemsInGroup++;
+                            } else {
+                                item.closest('.col').style.display = 'none';
+                            }
+                        });
+
+                        // Show or hide the entire day group based on whether it has visible items
+                        const dayHeading = group.querySelector('h5');
+                        if (visibleItemsInGroup > 0) {
+                            group.style.display = 'block';
+                            anyVisibleGroup = true;
+                        } else {
+                            group.style.display = 'none';
+                        }
+                    });
+                }
+
+                if (searchBoxAdmin) {
+                    searchBoxAdmin.addEventListener('input', filterAdminMenuItems);
+                }
+
+                // Apply initial filter
+                filterAdminMenuItems();
+
+            } else {
+                // User view filtering
+                const searchBoxUser = document.getElementById('searchBoxUser');
+                const categoryButtons = document.querySelectorAll('.category-btn');
+                const menuItems = document.querySelectorAll('.menu-item');
                 const noResultsEl = document.getElementById('noResults');
+
+                // Set initial state
                 let selectedCategory = 'all';
 
-                function normalize(text) {
-                    return (text || '').toString().trim().toLowerCase();
-                }
+                function filterUserMenuItems() {
+                    const searchText = searchBoxUser.value.toLowerCase().trim();
+                    let visibleItems = 0;
 
-                function matchesCategory(itemEl, category) {
-                    if (!category || category === 'all') return true;
-                    return normalize(itemEl.dataset.category) === category;
-                }
+                    menuItems.forEach(item => {
+                        const itemName = item.getAttribute('data-name');
+                        const itemCategory = item.getAttribute('data-category');
 
-                function matchesQuery(itemEl, query) {
-                    if (!query) return true;
-                    const name = normalize(itemEl.dataset.name);
-                    const category = normalize(itemEl.dataset.category);
-                    return name.includes(query) || category.includes(query);
-                }
+                        // Check if item matches category filter
+                        const categoryMatch = selectedCategory === 'all' || itemCategory === selectedCategory;
 
-                function filterItems() {
-                    const q = normalize(searchBox ? searchBox.value : '');
-                    let visibleCount = 0;
+                        // Check if item matches search text
+                        const searchMatch = searchText === '' ||
+                                           itemName.includes(searchText) ||
+                                           itemCategory.includes(searchText);
 
-                    items.forEach(item => {
-                        const ok = matchesCategory(item, selectedCategory) && matchesQuery(item, q);
-                        item.style.display = ok ? '' : 'none';
-                        if (ok) visibleCount++;
+                        // Show or hide item based on filters
+                        if (categoryMatch && searchMatch) {
+                            item.style.display = 'flex';
+                            visibleItems++;
+                        } else {
+                            item.style.display = 'none';
+                        }
                     });
 
+                    // Show no results message if needed
                     if (noResultsEl) {
-                        noResultsEl.style.display = visibleCount > 0 ? 'none' : '';
+                        noResultsEl.style.display = visibleItems === 0 ? 'block' : 'none';
                     }
                 }
 
-                if (searchBox) searchBox.addEventListener('input', filterItems);
-
-                categoryButtons.forEach(btn => {
-                    btn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        selectedCategory = normalize(this.dataset.category);
-
-                        categoryButtons.forEach(b => {
-                            b.classList.remove('btn-primary', 'active');
-                            b.classList.add('btn-outline-primary');
-                        });
-
-                        this.classList.remove('btn-outline-primary');
-                        this.classList.add('btn-primary', 'active');
-
-                        filterItems();
-                    });
-                });
-
-
-                const allBtn = document.querySelector('.category-btn[data-category="all"]');
-                if (allBtn) {
-                    allBtn.classList.remove('btn-outline-primary');
-                    allBtn.classList.add('btn-primary', 'active');
+                // Add event listeners for user view
+                if (searchBoxUser) {
+                    searchBoxUser.addEventListener('input', filterUserMenuItems);
                 }
 
+                // Category buttons for user view
+                if (categoryButtons.length > 0) {
+                    categoryButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            // Update selected category
+                            selectedCategory = this.getAttribute('data-category');
 
+                            // Update button styles
+                            categoryButtons.forEach(btn => {
+                                btn.classList.remove('active', 'btn-primary');
+                                btn.classList.add('btn-outline-primary');
+                            });
+
+                            this.classList.remove('btn-outline-primary');
+                            this.classList.add('active', 'btn-primary');
+
+                            // Apply filters
+                            filterUserMenuItems();
+                        });
+                    });
+                }
+
+                // Cart functionality
                 const cartBtn = document.getElementById('cartBtn');
                 if (cartBtn) {
                     cartBtn.addEventListener('click', function () {
@@ -240,12 +296,15 @@ else
                         const cart = JSON.parse(localStorage.getItem('foodCart')) || [];
                         const cntEl = document.getElementById('cartCount');
                         if (cntEl) cntEl.innerText = cart.length;
-                    } catch (e) {}
+                    } catch (e) {
+                        console.error('Error reading cart:', e);
+                    }
                 }
 
+                // Initialize user view
                 updateCartCount();
-                filterItems();
-            });
-        </script>
-    }
+                filterUserMenuItems();
+            }
+        });
+    </script>
 }
