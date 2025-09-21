@@ -22,7 +22,6 @@
                         </tr>
                     </thead>
                     <tbody id="cartBody">
-                        <!-- Cart items will be populated by JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -30,8 +29,8 @@
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <h4>Total: $<span id="cartTotal">0.00</span></h4>
                 <div>
-                    <a asp-controller="MenuItems" asp-action="Index" class="btn btn-secondary me-2">Continue Shopping</a>
-                    <button class="btn btn-success" id="checkoutBtn">Proceed to Payment</button>
+                    <button class="btn btn-secondary me-2" id="cancelBtn">Cancel</button>
+                    <button class="btn btn-success" id="checkoutBtn">Checkout</button>
                 </div>
             </div>
         </div>
@@ -41,35 +40,31 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Load cart from localStorage
+            const checkoutUrl = '@Url.Action("Payment", "Orders")';
+            const menuUrl = '@Url.Action("Index", "MenuItems")';
+
             function loadCart() {
                 const cart = JSON.parse(localStorage.getItem('foodCart')) || [];
                 const tbody = document.getElementById('cartBody');
                 tbody.innerHTML = '';
                 let total = 0;
 
-                if (cart.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Your cart is empty</td></tr>';
-                    document.getElementById('checkoutBtn').disabled = true;
-                } else {
-                    cart.forEach((item, index) => {
-                        total += item.totalPrice;
-                        tbody.innerHTML += `
-                        <tr>
-                            <td>${item.name}</td>
-                            <td>${item.category}</td>
-                            <td>$${item.price.toFixed(2)}</td>
-                            <td>
-                                <input type="number" min="1" class="form-control form-control-sm" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
-                            </td>
-                            <td>$${item.totalPrice.toFixed(2)}</td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" onclick="removeItem(${index})">Remove</button>
-                            </td>
-                        </tr>`;
-                    });
-                    document.getElementById('checkoutBtn').disabled = false;
-                }
+                cart.forEach((item, index) => {
+                    total += item.totalPrice;
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.category}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>
+                            <input type="number" min="1" class="form-control form-control-sm" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+                        </td>
+                        <td>$${item.totalPrice.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="removeItem(${index})">Remove</button>
+                        </td>
+                    </tr>`;
+                });
 
                 document.getElementById('cartTotal').innerText = total.toFixed(2);
             }
@@ -91,29 +86,38 @@
             }
 
             document.getElementById('checkoutBtn').addEventListener('click', function() {
-                window.location.href = '@Url.Action("Payment", "Orders")';
+                window.location.href = checkoutUrl;
             });
 
-            // Initial load
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear your cart?')) {
+                    localStorage.removeItem('foodCart');
+                    loadCart();
+                    window.location.href = menuUrl;
+                }
+            });
+
             loadCart();
         });
     </script>
 }
 
+
 <style>
+
     .card {
         border-radius: 15px;
     }
 
     .table th, .table td {
-        vertical-align: middle;
+        vertical-align: middle !important;
     }
 
     input[type="number"] {
         max-width: 80px;
     }
 
-    #checkoutBtn, .btn-secondary {
+    #checkoutBtn, #cancelBtn {
         min-width: 100px;
     }
 
