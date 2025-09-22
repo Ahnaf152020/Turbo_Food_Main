@@ -46,7 +46,7 @@
                                     <p class="card-text text-muted flex-grow-1">@item.Description</p>
 
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="price-text fw-bold">@item.Price.ToString("C")</span>
+                                        <span class="price-text fw-bold">BDT. @item.Price.ToString("N2")</span>
                                         <span class="badge @(item.Availability ? "bg-success" : "bg-danger") availability-badge">
                                             @(item.Availability ? "Available" : "Unavailable")
                                         </span>

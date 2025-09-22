@@ -9,7 +9,7 @@
 @Html.AntiForgeryToken()
 
 <div id="orders-container">
-    
+
     @foreach (var order in Model.OrderBy(o => o.OrderDate))
     {
         <div class="card mb-4 order-card" data-orderid="@order.OrderID">
@@ -34,8 +34,8 @@
                             <tr>
                                 <td>@item.MenuItem.Name</td>
                                 <td>@item.Quantity</td>
-                                <td>@item.UnitPrice.ToString("C")</td>
-                                <td>@item.TotalPrice.ToString("C")</td>
+                                <td>@item.UnitPrice.ToString("N2") BDT.</td>
+                                <td>@item.TotalPrice.ToString("N2") BDT.</td>
                                 <td class="status-cell-@order.OrderID">@order.Status</td>
                             </tr>
                         }
@@ -80,14 +80,14 @@
 
             const result = await response.json();
             if (result.success) {
-                
+
                 document.querySelectorAll('.status-cell-' + orderId)
                     .forEach(cell => cell.innerText = status);
 
                 alert('Order status updated!');
 
                 if (status === 'Completed' && btn) {
-                    
+
                     let card = btn.closest('.order-card');
                     let container = document.getElementById('orders-container');
                     container.appendChild(card);

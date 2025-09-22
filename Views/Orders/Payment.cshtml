@@ -15,7 +15,7 @@
                         <div id="summaryContent"></div>
                         <div class="d-flex justify-content-between mt-2">
                             <strong>Total:</strong>
-                            <strong id="summaryTotal">$0.00</strong>
+                            <strong id="summaryTotal">BDT 0.00</strong>
                         </div>
                     </div>
 
@@ -108,13 +108,13 @@
                         summaryContent.innerHTML += `
                         <div class="d-flex justify-content-between">
                             <span>${item.name} x${item.quantity}</span>
-                            <span>$${item.totalPrice.toFixed(2)}</span>
+                            <span>BDT ${item.totalPrice.toFixed(2)}</span>
                         </div>`;
                     });
                     document.getElementById('submitPayment').disabled = false;
                 }
 
-                document.getElementById('summaryTotal').textContent = `$${total.toFixed(2)}`;
+                document.getElementById('summaryTotal').textContent = `BDT ${total.toFixed(2)}`;
             }
 
             // Handle payment method changes
@@ -143,7 +143,7 @@
                 let transactionID = null;
 
                 // Generate a simple transaction ID for demo purposes
-                if (paymentMethod === 'Credit Card' || paymentMethod === 'PayPal') {
+                if (paymentMethod === 'Credit Card' || paymentMethod === 'UPay') {
                     transactionID = 'TXN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
                 }
 
