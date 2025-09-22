@@ -27,7 +27,7 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <h4>Total: $<span id="cartTotal">0.00</span></h4>
+                <h4>Total: BDT <span id="cartTotal">0.00</span></h4>
                 <div>
                     <button class="btn btn-secondary me-2" id="cancelBtn">Cancel</button>
                     <button class="btn btn-success" id="checkoutBtn">Checkout</button>
@@ -55,11 +55,11 @@
                     <tr>
                         <td>${item.name}</td>
                         <td>${item.category}</td>
-                        <td>$${item.price.toFixed(2)}</td>
+                        <td>BDT ${item.price.toFixed(2)}</td>
                         <td>
                             <input type="number" min="1" class="form-control form-control-sm" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
                         </td>
-                        <td>$${item.totalPrice.toFixed(2)}</td>
+                        <td>BDT ${item.totalPrice.toFixed(2)}</td>
                         <td>
                             <button class="btn btn-sm btn-danger" onclick="removeItem(${index})">Remove</button>
                         </td>
@@ -102,9 +102,7 @@
     </script>
 }
 
-
 <style>
-
     .card {
         border-radius: 15px;
     }

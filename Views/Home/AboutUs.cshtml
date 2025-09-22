@@ -5,83 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - TurboFood</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #2c3e50;
             --secondary: #e74c3c;
-            --accent: #3498db;
-            --light: #f8f9fa;
-            --dark: #343a40;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
             background-color: #f8f9fa;
-            padding: 20px 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .intro-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
         }
 
         .team-section {
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 25px rgba(0,0,0,0.08);
-            padding: 30px;
-            margin: 20px auto;
-            max-width: 1200px;
+            padding: 40px;
+            margin-bottom: 30px;
         }
 
         .team-member-card {
             border: none;
             border-radius: 15px;
-            overflow: hidden;
-            transition: all 0.3s;
+            padding: 20px;
+            text-align: center;
+            background: #fdfdfd;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
             height: 100%;
         }
 
             .team-member-card:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            }
-
-        .team-img {
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .github-btn {
-            background-color: #333;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-        }
-
-            .github-btn:hover {
-                background-color: #4078c0;
-                color: white;
-            }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            color: white;
-            background-color: var(--primary);
-            transition: all 0.3s;
-        }
-
-            .social-links a:hover {
-                transform: translateY(-3px);
-                background-color: var(--secondary);
             }
 
         .section-title {
@@ -95,118 +68,82 @@
                 content: '';
                 position: absolute;
                 bottom: -10px;
-                left: 0;
-                width: 50px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
                 height: 3px;
                 background-color: var(--secondary);
             }
 
-        .text-center .section-title:after {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
         .team-role {
-            color: #6c757d;
             font-style: italic;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
     <div class="page-container">
+        <!-- Project Objective Section -->
+        <section class="intro-section">
+            <h2 class="fw-bold mb-3">Project Objective</h2>
+            <p>
+                The main objective of this project is to design and implement a structured, user-friendly canteen management system.
+                The system aims to modernize the food ordering process within office environments by providing:
+            </p>
+            <ul>
+                <li>A responsive web interface for employees to browse menus and place orders</li>
+                <li>Real-time order confirmation and delivery tracking features</li>
+                <li>Role-based dashboards for employees, vendors, and administrators</li>
+                <li>Efficient menu and order management</li>
+                <li>Secure user authentication and payment history tracking</li>
+                <li>Enhanced transparency and accountability to reduce food waste and improve service quality</li>
+            </ul>
+            <p>
+                Through this system, we aim to demonstrate our expertise in full-stack development using Microsoft’s ASP.NET Core ecosystem,
+                along with strong UI/UX design, database integration, and role-based functionality.
+            </p>
+        </section>
+
         <!-- Team Members Section -->
         <section class="team-section py-5">
             <div class="container">
-                <h2 class="text-center fw-bold mb-3 section-title mx-auto">OUR TEAM</h2>
-                <p class="text-center mb-5">The brilliant minds behind TurboFood's innovative platform.</p>
+                <h2 class="text-center fw-bold mb-3 section-title">OUR TEAM</h2>
+                <p class="text-center mb-5">The brilliant minds behind TurboFood.</p>
 
                 <div class="row g-4">
                     <!-- Team Member 1 -->
                     <div class="col-lg-3 col-md-6">
-                        <div class="card team-member-card h-100">
-                            <img src="https://placehold.co/300x200/2c3e50/FFFFFF?text=Tasfia" class="card-img-top team-img" alt="Tasfia Jannat">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Tasfia Jannat</h5>
-                                <p class="text-muted">ID: 20220104026</p>
-                                <p class="team-role">Backend Developer</p>
-                                <div class="social-links d-flex justify-content-center gap-2 mb-3">
-                                    <a href="#"><i class="fab fa-github"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                </div>
-                                <a href="#" class="github-btn">
-                                    <i class="fab fa-github"></i> GitHub
-                                </a>
-                            </div>
+                        <div class="team-member-card">
+                            <h5 class="card-title">Ahnaf Amer</h5>
+                            <p class="text-muted">ID: 20220104040</p>
+                            <p class="team-role">Project Coordinator & Backend Developer</p>
                         </div>
                     </div>
 
                     <!-- Team Member 2 -->
                     <div class="col-lg-3 col-md-6">
-                        <div class="card team-member-card h-100">
-                            <img src="https://placehold.co/300x200/2c3e50/FFFFFF?text=Ahnaf" class="card-img-top team-img" alt="Ahnaf Amer">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Ahnaf Amer</h5>
-                                <p class="text-muted">ID: 20220104040</p>
-                                <p class="team-role">Frontend Developer</p>
-                                <div class="social-links d-flex justify-content-center gap-2 mb-3">
-                                    <a href="#"><i class="fab fa-github"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                </div>
-                                <a href="#" class="github-btn">
-                                    <i class="fab fa-github"></i> GitHub
-                                </a>
-                            </div>
+                        <div class="team-member-card">
+                            <h5 class="card-title">Khalid Hasan Ratin</h5>
+                            <p class="text-muted">ID: 20220104027</p>
+                            <p class="team-role">Backend Developer</p>
                         </div>
                     </div>
 
                     <!-- Team Member 3 -->
                     <div class="col-lg-3 col-md-6">
-                        <div class="card team-member-card h-100">
-                            <img src="https://placehold.co/300x200/2c3e50/FFFFFF?text=Khalid" class="card-img-top team-img" alt="Khalid Hasan Ratin">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Khalid Hasan Ratin</h5>
-                                <p class="text-muted">ID: 20220104027</p>
-                                <p class="team-role">Database Administrator</p>
-                                <div class="social-links d-flex justify-content-center gap-2 mb-3">
-                                    <a href="#"><i class="fab fa-github"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                </div>
-                                <a href="#" class="github-btn">
-                                    <i class="fab fa-github"></i> GitHub
-                                </a>
-                            </div>
+                        <div class="team-member-card">
+                            <h5 class="card-title">Lamisa Rahman Zimy</h5>
+                            <p class="text-muted">ID: 20220104051</p>
+                            <p class="team-role">Frontend Developer</p>
                         </div>
                     </div>
 
                     <!-- Team Member 4 -->
                     <div class="col-lg-3 col-md-6">
-                        <div class="card team-member-card h-100">
-                            <img src="https://placehold.co/300x200/2c3e50/FFFFFF?text=Lamisa" class="card-img-top team-img" alt="Lamisa Rahman Zimy">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Lamisa Rahman Zimy</h5>
-                                <p class="text-muted">ID: 20220104051</p>
-                                <p class="team-role">UI/UX Designer</p>
-                                <div class="social-links d-flex justify-content-center gap-2 mb-3">
-                                    <a href="#"><i class="fab fa-github"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                </div>
-                                <a href="#" class="github-btn">
-                                    <i class="fab fa-github"></i> GitHub
-                                </a>
-                            </div>
+                        <div class="team-member-card">
+                            <h5 class="card-title">Tasfia Jannat</h5>
+                            <p class="text-muted">ID: 20220104026</p>
+                            <p class="team-role">Frontend Developer</p>
                         </div>
                     </div>
                 </div>
@@ -215,7 +152,7 @@
                 <div class="text-center mt-5">
                     <h3 class="mb-3">Project Repository</h3>
                     <p>Check out our code and contribute to the project on GitHub</p>
-                    <a href="#https://github.com/Ahnaf152020/Turbo_Food_Main" class="btn btn-dark btn-lg">
+                    <a href="https://github.com/Ahnaf152020/Turbo_Food_Main" class="btn btn-dark btn-lg">
                         <i class="fab fa-github"></i> TurboFood GitHub Repository
                     </a>
                 </div>

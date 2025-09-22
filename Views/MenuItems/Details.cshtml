@@ -15,7 +15,7 @@
                 <strong>Category:</strong>
                 <span class="badge bg-secondary">@Model.Category</span>
             </p>
-            <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+            <p><strong>Price:</strong> @Model.Price.ToString("N2") BDT.</p>
             <p>
                 <strong>Availability:</strong>
                 @if (Model.Availability)
@@ -73,7 +73,7 @@
         // Load feedbacks for this menu item
         (function(){
             const itemId = @Model.ItemId;
-            fetch(`@Url.Action("ForMenuItem","Feedbacks")?id=${itemId}`)
+            fetch(`@Url.Action("ForMenuItem", "Feedbacks")?id=${itemId}`)
                 .then(r => r.text())
                 .then(html => {
                     document.getElementById('menu-feedbacks').innerHTML = html;
@@ -142,11 +142,11 @@
     </script>
     @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
     {
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            checkUserReviewForm();
-        });
-    </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                checkUserReviewForm();
+            });
+        </script>
     }
 }
 
@@ -155,63 +155,63 @@
         <!-- feedbacks will load here -->
     </div>
 
-    @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
-    {
-    <div id="review-section">
-        <div id="submit-review-form" style="display:none;">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5>Leave a Review</h5>
-                    <form asp-controller="Feedbacks" asp-action="Create" method="post" onsubmit="submitReview(event)">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="menuItemId" value="@Model.ItemId" />
-                        <div class="mb-3">
-                            <label class="form-label">Rating</label>
-                            <select name="rating" class="form-select" required>
-                                <option value="">Select...</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Message (optional)</label>
-                            <textarea name="message" class="form-control" rows="3" maxlength="1000"></textarea>
-                        </div>
-                        <button class="btn btn-primary" type="submit">Submit Review</button>
-                    </form>
+@if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+{
+        <div id="review-section">
+            <div id="submit-review-form" style="display:none;">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5>Leave a Review</h5>
+                        <form asp-controller="Feedbacks" asp-action="Create" method="post" onsubmit="submitReview(event)">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="menuItemId" value="@Model.ItemId" />
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <select name="rating" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message (optional)</label>
+                                <textarea name="message" class="form-control" rows="3" maxlength="1000"></textarea>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="edit-review-form" style="display:none;">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5>Edit Your Review</h5>
+                        <form id="editReviewForm" asp-controller="Feedbacks" asp-action="Edit" method="post" onsubmit="editReview(event)">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="feedbackId" id="edit-feedback-id" />
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <select name="rating" id="edit-rating" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message (optional)</label>
+                                <textarea name="message" id="edit-message" class="form-control" rows="3" maxlength="1000"></textarea>
+                            </div>
+                            <button class="btn btn-success" type="submit">Update Review</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="edit-review-form" style="display:none;">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5>Edit Your Review</h5>
-                    <form id="editReviewForm" asp-controller="Feedbacks" asp-action="Edit" method="post" onsubmit="editReview(event)">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="feedbackId" id="edit-feedback-id" />
-                        <div class="mb-3">
-                            <label class="form-label">Rating</label>
-                            <select name="rating" id="edit-rating" class="form-select" required>
-                                <option value="">Select...</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Message (optional)</label>
-                            <textarea name="message" id="edit-message" class="form-control" rows="3" maxlength="1000"></textarea>
-                        </div>
-                        <button class="btn btn-success" type="submit">Update Review</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    }
 }
+    }

@@ -36,7 +36,7 @@
                                 <th>Quantity</th>
                                 <th>Unit Price</th>
                                 <th>Total Price</th>
-                                <th>Action</th> 
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,24 +47,24 @@
                                     <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
                                     <td>
                                         <span class="badge
-                                                                    @(item.Status == "Completed" ? "bg-success" :
-                                                                                                                                                                                        item.Status == "Pending" ? "bg-warning" :
-                                                                                                                                                                                        item.Status == "Cancelled" ? "bg-danger" : "bg-info")">
+                                                                                    @(item.Status == "Completed" ? "bg-success" :
+                                                                                                                                                                                                                                                                                    item.Status == "Pending" ? "bg-warning" :
+                                                                                                                                                                                                                                                                                    item.Status == "Cancelled" ? "bg-danger" : "bg-info")">
                                     @item.Status
                                 </span>
                             </td>
                             <td>@item.MealName</td>
                             <td>@item.Quantity</td>
-                            <td>@item.UnitPrice.ToString("C")</td>
-                            <td>@item.TotalPrice.ToString("C")</td>
+                            <td>BDT @item.UnitPrice.ToString("N2")</td>
+                            <td>BDT @item.TotalPrice.ToString("N2")</td>
                             <td>
                                 <button class="btn btn-sm btn-info generate-invoice-btn"
                                         data-order-id="@item.OrderID"
                                         data-order-date="@item.OrderDate.ToString("yyyy-MM-dd HH:mm")"
                                         data-meal-name="@item.MealName"
                                         data-quantity="@item.Quantity"
-                                        data-unit-price="@item.UnitPrice.ToString("C")"
-                                        data-total-price="@item.TotalPrice.ToString("C")"
+                                        data-unit-price="@item.UnitPrice.ToString("N2")"
+                                        data-total-price="@item.TotalPrice.ToString("N2")"
                                         data-status="@item.Status">
                                     <i class="fas fa-file-pdf me-1"></i> Invoice
                                 </button>
@@ -103,7 +103,6 @@
                             </tr>
                         </thead>
                         <tbody id="invoice-items">
-                            
                         </tbody>
                         <tfoot>
                             <tr>
@@ -156,12 +155,12 @@
 
 @section Scripts {
     <script>
-        
+
         document.addEventListener('DOMContentLoaded', function () {
-            
+
             const { jsPDF } = window.jspdf;
 
-            
+
             const generateButtons = document.querySelectorAll('.generate-invoice-btn');
 
             generateButtons.forEach(button => {
@@ -171,7 +170,7 @@
             });
 
             function generateInvoice(button) {
-                
+
                 const orderId = button.getAttribute('data-order-id');
                 const orderDate = button.getAttribute('data-order-date');
                 const mealName = button.getAttribute('data-meal-name');
@@ -180,7 +179,7 @@
                 const totalPrice = button.getAttribute('data-total-price');
                 const status = button.getAttribute('data-status');
 
-               
+
                 const invoice = document.getElementById('invoice-template');
 
                 // Populate invoice data
@@ -195,22 +194,22 @@
                     minute: '2-digit'
                 });
 
-                
-                const itemsContainer = document.getElementById('invoice-items');
-                itemsContainer.innerHTML = ''; 
 
-                
+                const itemsContainer = document.getElementById('invoice-items');
+                itemsContainer.innerHTML = '';
+
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td style="border: 1px solid #dee2e6; padding: 12px; font-weight: 500;">${mealName}</td>
                     <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">${quantity}</td>
-                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">${unitPrice}</td>
-                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right; font-weight: bold;">${totalPrice}</td>
+                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">BDT ${unitPrice}</td>
+                    <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right; font-weight: bold;">BDT ${totalPrice}</td>
                 `;
                 itemsContainer.appendChild(row);
 
                 // Set the grand total
-                document.getElementById('invoice-grand-total').textContent = totalPrice;
+                document.getElementById('invoice-grand-total').textContent = `BDT ${totalPrice}`;
 
                 // Make the invoice template visible temporarily for capturing
                 const originalDisplay = invoice.style.display;
@@ -221,11 +220,11 @@
                     scale: 2,
                     backgroundColor: '#ffffff'
                 }).then(canvas => {
-                    
+
                     invoice.style.display = originalDisplay;
 
                     const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF('p', 'mm', 'a4'); 
+                    const pdf = new jsPDF('p', 'mm', 'a4');
 
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -234,7 +233,7 @@
 
                     const ratio = Math.min((pdfWidth - 20) / imgWidth, (pdfHeight - 20) / imgHeight);
                     const imgX = (pdfWidth - imgWidth * ratio) / 2;
-                    const imgY = 10; 
+                    const imgY = 10;
 
                     pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
                     pdf.save(`TurboFood-Invoice-${orderId}.pdf`);
